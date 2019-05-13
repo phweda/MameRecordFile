@@ -1,6 +1,6 @@
 # MameRecordFile
 
-### Utility to manage MAME inp files. Linux support coming. 
+### Utility to manage MAME inp files.
 
 ### Saves MAME inp (recording) files you want to retain with a score you enter. 
 
