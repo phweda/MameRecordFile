@@ -28,7 +28,7 @@ dependencies {
 
 
 version = "1.0"
-val projectname = "mrf"
+val projectname = "MRF"
 
 // TODO figure out how to get Dist build to use the fat jar
 val fatJar = task("fatJar", type = Jar::class) {
@@ -57,7 +57,7 @@ distributions {
     getByName("main") {
         baseName = "$projectname"
         contents {
-            from("readme.md")
+            from("README.txt")
         }
     }
 }
