@@ -369,6 +369,8 @@ class MameRecordFile private constructor() {
             val logger = Debug()
             val mrf = MameRecordFile()
             val fileName: String
+            val icon = ImageIcon("src/main/resources/MAME_Record_File_48_icon.png")
+            frame.setIconImage(icon.getImage())
 
             if (args.isNotEmpty() && args[0].isNotEmpty()) {
                 if (args[0] == "-S") {
