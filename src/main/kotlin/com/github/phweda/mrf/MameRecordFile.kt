@@ -71,14 +71,15 @@ class MameRecordFile private constructor() {
             val jfc = JFileChooser()
             jfc.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
             jfc.dialogTitle = "Select Records folder"
-            jfc.showDialog(null, "OK")
-            recordsDir = jfc.selectedFile
-            try {
-                Files.write(recordsDirPathFile.toPath(), recordsDir!!.absolutePath.toByteArray())
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
+            val ok = jfc.showDialog(null, "OK")
+            if (ok == JFileChooser.APPROVE_OPTION) {
+                recordsDir = jfc.selectedFile
+                try {
+                    Files.write(recordsDirPathFile.toPath(), recordsDir!!.absolutePath.toByteArray())
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            } else System.exit(-1)
         }
 
         if (gameGoalsFile.exists()) {
@@ -364,25 +365,44 @@ class MameRecordFile private constructor() {
         private val screenSize = Toolkit.getDefaultToolkit().screenSize
         private var goals: HashMap<String, String>? = null
 
+        private var logger: Debug? = null
+        private val mrf = MameRecordFile()
+
         @JvmStatic
         fun main(args: Array<String>) {
-            val logger = Debug()
-            val mrf = MameRecordFile()
-            val fileName: String
             val icon = ImageIcon("src/main/resources/MAME_Record_File_48_icon.png")
-            frame.setIconImage(icon.getImage())
+            frame.iconImage = icon.image
 
             if (args.isNotEmpty() && args[0].isNotEmpty()) {
                 if (args[0] == "-S") {
-                    logger.logEnvironment(debug = true, systemDebug = true)
-                    mrf.showScores()
+                    if (logger == null) {
+                        logger = Debug(File("log.txt").outputStream())
+                        logger!!.out("MRF running\n")
+                    }
+
+                    logger!!.logEnvironment(debug = true, systemDebug = true)
+                    logger!!.out(Arrays.toString(args))
+                    if (args.size > 1 && args[1].isNotEmpty()) {
+                        saveRecord(args[1])
+                    } else {
+                        mrf.showScores()
+                    }
                 } else {
-                    fileName = args[0]
-                    val score = JOptionPane.showInputDialog("Enter score")
-                    mrf.copyFile(File(fileName), score)
+                    saveRecord(args[0])
                 }
             } else {
                 mrf.showScores()
+            }
+        }
+
+        private fun saveRecord(fileName: String) {
+            try {
+                val score = JOptionPane.showInputDialog("Enter score")
+                mrf.copyFile(File(fileName), score)
+            } catch (e: RuntimeException) {
+                if (logger == null) logger = Debug(File("log.txt").outputStream())
+                logger!!.out("MRF running\n")
+                logger!!.out(e.printStackTrace().toString())
             }
         }
 

@@ -80,6 +80,7 @@ class Debug {
             list.add("[" + sdateFormat.format(GregorianCalendar().time) + "] " + output)
         } else {
             writer!!.println("[" + sdateFormat.format(GregorianCalendar().time) + "] " + output)
+            writer!!.flush()
         }
     }
 
